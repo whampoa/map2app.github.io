@@ -1,0 +1,66 @@
+<<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+
+<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.18.0/mapbox-gl.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.18.0/mapbox-gl.css' rel='stylesheet' />
+
+</head>
+<body>
+
+<div id='map'></div>
+<div class='map-overlay' id='features'><h2>US population density</h2><div id='pd'><p>Hover over a state!</p></div></div>
+<div class='map-overlay' id='legend'></div>
+
+
+
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoibHVpc2ciLCJhIjoiY2lvaDk1anUyMDFxYXVkbTNoeThwenBsbCJ9.1gvvrzP7G4dE-huBWcFvog';
+
+var map = new mapboxgl.Map({
+    container: 'map', // container id
+    style: 'mapbox://styles/luisg/ciok1ohbb0034bpne66mg8cuv'
+});
+
+map.on('load', function() {
+  // the rest of the code will go in here
+
+var layers = ['0-10', '10-20', '20-50', '50-100', '100-200', '200-500', '500-1000', '1000+'];
+
+layers.forEach(function(layer) {;
+  var color = map.getPaintProperty(layer, 'fill-color');
+  var item = document.createElement('div');
+  var key = document.createElement('span');
+  key.className = 'legend-key';
+  key.style.backgroundColor = color;
+
+  var value = document.createElement('span');
+  value.innerHTML = layer;
+  item.appendChild(key);
+  item.appendChild(value);
+  legend.appendChild(item);
+});
+
+map.on('mousemove', function (e) {
+  var states = map.queryRenderedFeatures(e.point, {
+      layers: layers
+  });
+
+  if (states.length > 0) {
+      document.getElementById('pd').innerHTML = "<h3><strong>" + states[0].properties.name + "</strong></h3><p><strong><em>" + states[0].properties.density + "</strong> people per square mile</em></p>";
+  } else {
+      document.getElementById('pd').innerHTML = '<p>Hover over a state!</p>';
+  }
+});
+
+map.getCanvas().style.cursor = 'default';
+
+map.fitBounds([[-133.2421875, 16.972741], [-47.63671875, 52.696361]]);
+
+});
+
+</script>
+
+</body>
+</html>
